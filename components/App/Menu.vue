@@ -17,7 +17,7 @@
                     Tableau de board
                 </NuxtLink>
             </li>
-            <li class="menu-liste border-bottom">
+            <li class="menu-liste border-bottom my-1">
                 <NuxtLink to="/admin" class="list-group-item">
                     <UserCheck class="me-1" style="margin-bottom: 5px;" />
                     Administrateurs
