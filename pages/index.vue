@@ -257,21 +257,8 @@
     display: flex;
     justify-content: center;
 }
-.table-title {
-    color: #686868;
-    font-size: 16px;
-    line-height: 21.79px;
-    font-weight: 600;
-    text-align: center;
-}
 .border-bottom {
     border-bottom: 1px solid #E6EDEF;
-}
-.body-title {
-    color: #000000;
-    font-size: 16px;
-    line-height: 21.79px;
-    font-weight: 600;
 }
 .body-date {
     color: #252525;
