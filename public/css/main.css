@@ -10544,6 +10544,17 @@ span.fi-rs-apps {
   justify-content: center;
   align-items: center;
 }
+.btn-danger {
+  width: 32px;
+  height: 32px;
+  background-color: #D40405 !important;
+  border: 1px solid #D40405 !important;
+  border-radius: 23px;
+  padding: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .flex-action {
   display: flex;
     justify-content: center;

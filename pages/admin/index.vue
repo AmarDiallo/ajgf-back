@@ -60,8 +60,8 @@
                         </div>
                         <div class="flex-action">
                             <p class="text-end">
-                                <button class="btn btn-success">
-                                    <IconsEye />
+                                <button class="btn btn-danger">
+                                    <IconsCross />
                                 </button>
                             </p>
                         </div>
