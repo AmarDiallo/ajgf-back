@@ -47,7 +47,7 @@
 </template>
 <script setup>
 definePageMeta({
-    layout: 'app',
+    layout: 'auth',
 });
 import useVuelidate from '@vuelidate/core'
 import { required, email, minLength, helpers } from '@vuelidate/validators'

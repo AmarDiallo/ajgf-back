@@ -10508,8 +10508,9 @@ span.fi-rs-apps {
 }
 
 .card-footer {
-  padding: 16px 0 0 0;
   background-color: #fff !important;
+  padding: 16px 20px;
+  border-radius: 0 0 16px 16px;
 }
 
 .page-title {
@@ -10527,12 +10528,14 @@ span.fi-rs-apps {
   text-align: center;
   padding: 10px 0;
 }
+
 .body-title {
   color: #000000;
   font-size: 16px;
   line-height: 21.79px;
   font-weight: 600;
 }
+
 .btn-success {
   width: 32px;
   height: 32px;
@@ -10544,6 +10547,7 @@ span.fi-rs-apps {
   justify-content: center;
   align-items: center;
 }
+
 .btn-danger {
   width: 32px;
   height: 32px;
@@ -10555,7 +10559,8 @@ span.fi-rs-apps {
   justify-content: center;
   align-items: center;
 }
+
 .flex-action {
   display: flex;
-    justify-content: center;
+  justify-content: center;
 }
