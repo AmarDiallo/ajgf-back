@@ -13,7 +13,7 @@
                             <div class="header-action-right">
                                 <div class="header-action-2">
                                     <div class="header-action-icon-2">
-                                        <button class="btn btn-header">
+                                        <button class="btn btn-header" @click="openProfil()">
                                             <IconsUser class="mb-1" />
                                         </button>
                                     </div>
@@ -28,33 +28,15 @@
                     </div>
                 </div>
             </div>
-            <div class="header-bottom header-bottom-bg-color sticky-bar">
-                <div class="container">
-                    <div class="header-wrap header-space-between position-relative">
-                        <div class="logo logo-width-1 d-block d-lg-none">
-                            <a href="/">
-                                <!-- <img src="/imgs/logo2.png" alt="logo" style="height: 50px; width: 120px;"> -->
-                            </a>
-                        </div>
-                        <div class="header-action-right d-block d-lg-none">
-                            <div class="header-action-2">
-                                <div class="header-action-icon-2 d-block d-lg-none">
-                                    <div class="burger-icon burger-icon-white" style="margin-top: -18px;">
-                                        <span class="burger-icon-top"></span>
-                                        <span class="burger-icon-mid"></span>
-                                        <span class="burger-icon-bottom"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </header>
     </div>
 </template>
 <script setup>
+const router = useRouter();
 
+const openProfil = () => {
+    router.push('/profil');
+}
 </script>
 
 <style scoped>

@@ -9,7 +9,7 @@
                         <p class="page-title">Articles</p>
                     </div>
                     <div>
-                        <button class="btn btn-secondary">Ajouter un admin</button>
+                        <NuxtLink to="/admin/add" class="btn btn-secondary">Ajouter un admin</NuxtLink>
                     </div>
                 </div>
             </div>

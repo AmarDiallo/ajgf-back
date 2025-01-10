@@ -61,7 +61,7 @@
             </div>
             <div class="card-footer">
                 <button class="btn btn-secondary">Enregistrer</button>
-                <button class="btn btn-primary mx-3">Annuler</button>
+                <button class="btn btn-cancel mx-3">Annuler</button>
             </div>
         </div>
     </div>
