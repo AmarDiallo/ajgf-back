@@ -63,9 +63,9 @@
                         </div>
                         <div class="flex-action">
                             <p class="text-end">
-                                <button class="btn btn-success">
+                                <NuxtLink to="/offres/slug" class="btn btn-success">
                                     <IconsEye />
-                                </button>
+                                </NuxtLink>
                             </p>
                         </div>
                     </div>
