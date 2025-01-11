@@ -10606,3 +10606,47 @@ span.fi-rs-apps {
   background-color: #fff !important;
   color: #505050;
 }
+
+.info-card {
+  background-color: #fff;
+  padding: 16px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  border: 1px solid #E5EDEF;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.info-icon {
+  width: 48px;
+  height: 48px;
+  background-color: #004F71 !important;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.info-content {
+  margin-left: 10px;
+}
+
+.info-text {
+  color: #686868;
+  font-size: 16px;
+  line-height: 21.79px;
+  font-weight: 400;
+  margin-bottom: 0;
+}
+
+.info-value {
+  color: #252525;
+  font-size: 16px;
+  line-height: 21.79px;
+  font-weight: 700;
+}
+
+.text-pending {
+  color: #DCAC05;
+}

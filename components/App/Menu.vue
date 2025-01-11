@@ -19,7 +19,7 @@
             </li>
             <li class="menu-liste border-bottom my-1">
                 <NuxtLink to="/admin" class="list-group-item">
-                    <UserCheck class="me-1" style="margin-bottom: 5px;" />
+                    <UCheck class="me-1" style="margin-bottom: 5px;" />
                     Administrateurs
                 </NuxtLink>
             </li>
@@ -69,6 +69,8 @@
     </div>
 </template>
 <script setup>
+import UCheck from '../Icons/UCheck.vue';
+
 
 </script>
 <style scoped>
