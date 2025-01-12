@@ -1,6 +1,11 @@
 <template>
-    <div>
-        <h5 class="page-title">Détails candidature</h5>
+    <div v-if="loading" class="text-center loading-recruiter">
+        <div class="spinner-border spinner-border-recruiter" role="status">
+            <span class="visually-hidden">Chargement des offres...</span>
+        </div>
+    </div>
+    <div v-if="offerDetail && !loading">
+        <h5 class="page-title">Détails de l'offre d'emploi</h5>
         <div class="row" style="margin-top: 16px;">
             <div class="col-md-12 col-lg-12">
                 <div class="info-card">
@@ -9,7 +14,7 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Titre de l'offre</p>
-                        <p class="info-value">Développeur fullstack</p>
+                        <p class="info-value">{{ offerDetail.title }}</p>
                     </div>
                 </div>
             </div>
@@ -17,13 +22,13 @@
 
         <div class="row" style="margin-top: 16px;">
             <div class="col-md-4 col-lg-4">
-                <div class="info-card">
-                    <div class="info-icon">
-                        <img src="/imgs/offre/orange.jpeg" alt="">
+                <div class="info-card" v-if="offerDetail.recruiter">
+                    <div class="info-icon logo-recruiter">
+                        <img :src="offerDetail.recruiter.logo" :alt="offerDetail.recruiter.name" />
                     </div>
                     <div class="info-content">
                         <p class="info-text">Entreprise</p>
-                        <p class="info-value">Orange Guinée</p>
+                        <p class="info-value">{{ offerDetail.recruiter.name }}</p>
                     </div>
                 </div>
             </div>
@@ -34,7 +39,7 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Type de contrat</p>
-                        <p class="info-value">CDI</p>
+                        <p class="info-value">{{ offerDetail.contract_type }}</p>
                     </div>
                 </div>
             </div>
@@ -57,7 +62,7 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Expérience</p>
-                        <p class="info-value">1 à 3 ans</p>
+                        <p class="info-value">{{ offerDetail.experience }}</p>
                     </div>
                 </div>
             </div>
@@ -68,7 +73,7 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Niveau d'études</p>
-                        <p class="info-value">Bac + 5</p>
+                        <p class="info-value">{{ offerDetail.degree }}</p>
                     </div>
                 </div>
             </div>
@@ -90,7 +95,9 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Date de publication</p>
-                        <p class="info-value">01 juin 2024</p>
+                        <p class="info-value" v-if="offerDetail.published_at">{{ $formatDate(offerDetail.published_at)
+                            }} </p>
+                        <p class="info-value" v-else> - </p>
                     </div>
                 </div>
             </div>
@@ -101,7 +108,7 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Date d'éxpiration</p>
-                        <p class="info-value">20 juin 2024</p>
+                        <!-- <p class="info-value">{{ $formatDate(offerDetail.limit_date) }}</p> -->
                     </div>
                 </div>
             </div>
@@ -111,8 +118,8 @@
                         <IconsHelp class="text-white" />
                     </div>
                     <div class="info-content">
-                        <p class="info-text">Candidature</p>
-                        <p class="info-value">5</p>
+                        <p class="info-text">Candidatures</p>
+                        <p class="info-value">{{ offerDetail.candidacy_count }}</p>
                     </div>
                 </div>
             </div>
@@ -129,7 +136,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <button class="btn btn-primary">Désactiver cette offre</button>
+                <button class="btn btn-primary" @click="blockOffer()">Désactiver cette offre</button>
             </div>
         </div>
 
@@ -151,15 +158,55 @@
                     l’analyse des besoins à la mise en production. Passionné par les défis techniques, j’aime développer
                     des solutions performantes, évolutives et user-friendly. Mon objectif est de créer des plateformes
                     optimisées, sécurisées et centrées sur l’utilisateur, tout en respectant les bonnes pratiques de
-                    développement.</p>
+                    développement.
+                </p>
             </div>
+        </div>
+
+        <!-- Modal de suppression  -->
+        <div class="modal fade" id="modalArticle" tabindex="-1" aria-labelledby="modalArticleLabel" aria-hidden="true">
+            <template v-if="offerDetail">
+                <ModalDelete :modalObject="modalObjects" @deleteObject="onBlockThisOffer" />
+            </template>
         </div>
     </div>
 </template>
 <script setup>
 definePageMeta({
     layout: 'default',
-})
+});
+const route = useRoute();
+const offerStore = useOfferStore();
+
+const loading = computed(() => offerStore.getLoading);
+const offerDetail = computed(() => offerStore.getOfferDetail);
+
+const { $formatDate } = useNuxtApp();
+
+const myModal = ref(null);
+const modalObjects = ref({});
+
+onMounted(() => {
+    offerStore.onFetchOfferDetail(route.params.slug);
+
+    myModal.value = new bootstrap.Modal(document.getElementById('modalArticle'));
+});
+
+const blockOffer = async () => {
+    modalObjects.value = {
+        title: "Désactivation de l'offre",
+        description: "Êtes vous sûr de vouloir désactiver l'offre d'emploi",
+        name: "test",
+    }
+    console.log(modalObjects.value);
+    myModal.value.show()
+    // await offerStore.onBlockOffer(offerDetail.value.slug);
+};
+
+const onBlockThisOffer = () => {
+    // offerStore.onBlockOffer(offerDetail.value.slug);
+    myModal.value.hide();
+};
 </script>
 <style scoped>
 .entreprise {
@@ -204,6 +251,10 @@ definePageMeta({
     line-height: 21.79px;
     font-weight: 600;
     text-align: center;
+}
+
+.logo-recruiter {
+    background-color: #fff !important;
 }
 
 .btn-success {

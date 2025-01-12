@@ -7,6 +7,7 @@ export const useOfferStore = defineStore("offer", {
         showSuccess: false,
         errorMessage: "",
         selectedOffer: {},
+        offerDetail: {},
         errors: [],
         offersList: [],
         onlineOffers: [],
@@ -21,6 +22,7 @@ export const useOfferStore = defineStore("offer", {
         getDraftOffers: (state) => state.draftOffers,
         getOffersList: (state) => state.offersList,
         getSelectedOffer: (state) => state.selectedOffer,
+        getOfferDetail: (state) => state.offerDetail,
     },
 
     actions: {
@@ -40,15 +42,31 @@ export const useOfferStore = defineStore("offer", {
             }
         },
 
-        async onFetchSelectedOffer(slug: string) {
+        async onFetchOfferDetail(slug: string) {
             try {
                 this.loading = true;
                 const { $api } = useNuxtApp();
-                let response = await $api.get("/api/offers/front/" + slug + "/");
+                let response = await $api.get("/api/offers/" + slug + "/admin-detail");
                 if (response.status === 200) {
                     this.loading = false;
                     console.log(response.data);
-                    this.selectedOffer = response.data;
+                    this.offerDetail = response.data;
+                }
+            } catch (error: any) {
+                this.loading = false;
+                this.getError(error);
+            }
+        },
+
+        async onBlockOffer(slug: string, formData: any) {
+            try {
+                this.loading = true;
+                const { $api } = useNuxtApp();
+                let response = await $api.put("/api/offers/" + slug + "/admin-block/", formData);
+                if (response.status === 200) {
+                    this.loading = false;
+                    console.log(response.data)
+                    await this.onFetchOfferDetail(slug);
                 }
             } catch (error: any) {
                 this.loading = false;

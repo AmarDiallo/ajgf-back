@@ -65,7 +65,7 @@
                             </div>
                             <div class="flex-action">
                                 <p class="text-end">
-                                    <NuxtLink to="/offres/slug" class="btn btn-success">
+                                    <NuxtLink :to="'/offres/' + offer.slug" class="btn btn-success">
                                         <IconsEye />
                                     </NuxtLink>
                                 </p>

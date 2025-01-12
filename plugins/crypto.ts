@@ -4,7 +4,7 @@ export default defineNuxtPlugin(async () => {
     return {
         provide: {
             crypto: (token: any) => {
-                if(typeof token !== 'string') {
+                if (typeof token === 'string') {
                     const secretKey = useRuntimeConfig().public.vueAppSecretKey;
                     return CryptoJS.AES.encrypt(token, secretKey).toString();
                 }
@@ -15,4 +15,4 @@ export default defineNuxtPlugin(async () => {
             }
         }
     }
-})
+});
