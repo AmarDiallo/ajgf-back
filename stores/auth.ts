@@ -34,89 +34,19 @@ export const useAuthStore = defineStore('auth', {
                 this.loading = true;
                 const { $api, $crypto, $locally } = useNuxtApp();
                 let response = await $api.post('/api/auth/jwt/create/', formData);
-                console.log('test')
                 if (response.status === 200) {
                     this.loading = false;
-                    $locally.removeItem('userEmail');
-                    useCookie('auth_token').value = $crypto(response.data.access)
+                    useCookie('auth_token').value = $crypto(response.data.access);
                     useCookie('refresh_token').value = $crypto(response.data.refresh);
-                    await this.onFetchAuthUser();
-                }
-            } catch (error: any) {
-                this.loading = false;
-                this.getError(error)
-            }
-        },
-
-        async onRegister(formData: any) {
-            try {
-                this.loading = true;
-                const router = useRouter();
-                const { $api, $locally, $swal } = useNuxtApp();
-                let response = await $api.post('/api/users/', formData);
-
-                if (response.status === 201) {
-                    this.loading = false;
-                    $locally.setItem('userEmail', formData.email);
-                    $swal.fire({
-                        text: "Merci de consulter votre boîte de réception pour récupérer votre code de confirmation.",
-                        icon: "success",
-                    });
-                    if (formData.is_recruiter == true) {
-                        router.push('/main/confirmation');
-                    } else {
-                        router.push('/app/confirmation');
-                    }
-                }
-            } catch (error: any) {
-                this.loading = false;
-                this.getError(error)
-            }
-        },
-
-        async onActivatedAuth(data: any) {
-            try {
-                this.loading = true;
-                const { $api, $swal } = useNuxtApp();
-                let response = await $api.post('/api/users/activation/', data);
-                console.log(response)
-                if (response.status === 204) {
-                    $swal.fire({
-                        text: "Félicitations, votre compte a été confirmé avec succès. Vous pouvez maintenant vous connectez.",
-                        icon: "success",
-                    });
-                    this.loading = false;
-                    this.showConfirmCode = true;
-                    const router = useRouter()
-                    router.push('/')
-                }
-            } catch (error: any) {
-                this.loading = false;
-                this.getError(error)
-            }
-        },
-
-        async onFetchAuthUser() {
-            try {
-                this.loading = true;
-                const { $api, $crypto, $locally } = useNuxtApp();
-                let response = await $api.get('/api/users/me/');
-                if (response.status === 200) {
-                    this.loading = false;
-                    console.log(response.data);
-                    $locally.setItem('user', $crypto(response.data));
                     const router = useRouter();
-                    if (response.data.is_recruiter == true) {
-                        return router.push('/recruiter/dashboard')
-                    } else {
-                        return router.push('/candidat/dashboard')
-                    }
+                    router.push('/');
                 }
             } catch (error: any) {
                 this.loading = false;
                 this.getError(error)
             }
         },
+
 
         async onUpdateRecruiter(data: any) {
             try {

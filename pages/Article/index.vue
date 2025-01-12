@@ -72,7 +72,16 @@
 <script setup>
 definePageMeta({
     layout: 'default',
-})
+});
+
+const articleStore = useArticleStore();
+const loading = computed(() => articleStore.loading);
+const articles = computed(() => articleStore.getArticles);
+
+onMounted(() => {
+    articleStore.onFetchArticles();
+});
+
 </script>
 <style scoped>
 .zone-search {

@@ -18,7 +18,7 @@
                                         </button>
                                     </div>
                                     <div class="header-action-icon-2">
-                                        <button class="btn btn-header">
+                                        <button class="btn btn-header" @click="onLogout()">
                                             <IconsLogout class="mb-1" />
                                         </button>
                                     </div>
@@ -36,6 +36,27 @@ const router = useRouter();
 
 const openProfil = () => {
     router.push('/profil');
+}
+
+const onLogout = () => {
+    const { $cookies, $swal } = useNuxtApp();
+
+    $swal.fire({
+        title: 'Déconnexion',
+        text: 'Êtes-vous sûr de vouloir vous déconnecter ?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Oui, déconnecter',
+        cancelButtonText: 'Annuler',
+        confirmButtonColor: '#D71F27',
+        cancelButtonColor: '',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $cookies.remove('auth_token', { path: '/' });
+            $cookies.remove('refresh_token', { path: '/' });
+            window.location.href = '/connexion';
+        }
+    });
 }
 </script>
 

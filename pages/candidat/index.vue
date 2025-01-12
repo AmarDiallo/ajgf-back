@@ -33,7 +33,7 @@
                         <div class="flex-status">
                             <p class="table-title text-center">Statut</p>
                         </div>
-                         <div class="flex-status">
+                        <div class="flex-status">
                             <p class="table-title text-center">Inscription</p>
                         </div>
                         <div class="flex-action">
@@ -41,32 +41,46 @@
                         </div>
                     </div>
                     <!-- Table content  -->
-                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom"
-                        v-for="entreprise in 12" :key="entreprise">
-                        <div class="flex-name">
-                            <p class="body-title">Amar DIALLO</p>
+                    <div v-if="candidats.count > 0 && !loading">
+                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom"
+                            v-for="candidat in candidats.results" :key="candidat">
+                            <div class="flex-name">
+                                <p class="body-title">{{ candidat.last_name }} {{ candidat.first_name}}</p>
+                            </div>
+                            <div class="flex-email">
+                                <p class="body-title">{{ candidat.email }}</p>
+                            </div>
+                            <div class="flex-phone text-center">
+                                <p class="body-title" v-if="candidat.city">{{ candidat.city }}, {{ candidat.country }}
+                                </p>
+                                <p class="body-title" v-else> - </p>
+                            </div>
+                            <div class="flex-role text-center">
+                                <p class="body-title">{{ candidat.candidacies_count }}</p>
+                            </div>
+                            <div class="flex-status text-center">
+                                <p class="body-title text-success" v-if="candidat.is_active">Actif</p>
+                                <p class="body-title text-pending" v-else>Non actif</p>
+                            </div>
+                            <div class="flex-status text-center">
+                                <p class="body-title text-center">{{ $formatDate(candidat.created_at) }}</p>
+                            </div>
+                            <div class="flex-action">
+                                <p class="text-end">
+                                    <NuxtLink :to="'/candidat/' + candidat.slug" class="btn btn-success">
+                                        <IconsEye />
+                                    </NuxtLink>
+                                </p>
+                            </div>
                         </div>
-                        <div class="flex-email">
-                            <p class="body-title">amardiallo94@gmail.com</p>
-                        </div>
-                        <div class="flex-phone text-center">
-                            <p class="body-title">Conakry, Guinée</p>
-                        </div>
-                        <div class="flex-role text-center">
-                            <p class="body-title">3</p>
-                        </div>
-                        <div class="flex-status text-center">
-                            <p class="body-title text-success">Actif</p>
-                        </div>
-                        <div class="flex-status text-center">
-                            <p class="body-title text-center">12 juin 2024</p>
-                        </div>
-                        <div class="flex-action">
-                            <p class="text-end">
-                                <NuxtLink to="/candidat/slug" class="btn btn-success">
-                                    <IconsEye />
-                                </NuxtLink>
-                            </p>
+                    </div>
+                    <div v-if="candidats.count === 0 && !loading" class="text-center my-4">
+                        <p>Il n'y a pas de candidats enregistrés</p>
+
+                    </div>
+                    <div v-if="loading" class="text-center loading-recruiter">
+                        <div class="spinner-border spinner-border-recruiter" role="status">
+                            <span class="visually-hidden">Chargement des offres...</span>
                         </div>
                     </div>
                 </div>
@@ -75,7 +89,19 @@
     </div>
 </template>
 <script setup>
+const { $formatDate } = useNuxtApp();
+const candidatStore = useCandidateStore();
 
+const loading = computed(() => candidatStore.loading);
+const candidats = computed(() => candidatStore.getCandidates);
+
+onMounted(() => {
+    candidatStore.onFetchCandidates();
+});
+
+const createdAt = computed(() => {
+    return new Date().toLocaleDateString();
+});
 </script>
 <style scoped>
 .zone-search {

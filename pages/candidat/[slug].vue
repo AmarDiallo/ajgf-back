@@ -1,5 +1,10 @@
 <template>
-    <div>
+    <div v-if="loading" class="text-center loading-recruiter">
+        <div class="spinner-border spinner-border-recruiter" role="status">
+            <span class="visually-hidden">Chargement des offres...</span>
+        </div>
+    </div>
+    <div v-if="candidatDetails && !loading">
         <h5 class="page-title mb-3">Profil candidat</h5>
         <div class="row" style="margin-top: 16px;">
             <div class="col-md-4 col-lg-4">
@@ -9,7 +14,7 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Prénom et Nom</p>
-                        <p class="info-value">Amar DIALLO</p>
+                        <p class="info-value">{{ candidatDetails.last_name }} {{ candidatDetails.first_name }}</p>
                     </div>
                 </div>
             </div>
@@ -20,7 +25,7 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Poste actuel ou récent</p>
-                        <p class="info-value">Développeur full-stack</p>
+                        <p class="info-value">{{ candidatDetails.actual_position }}</p>
                     </div>
                 </div>
             </div>
@@ -31,7 +36,8 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Adresse</p>
-                        <p class="info-value">Conakry, Guinée</p>
+                        <p class="info-value" v-if="candidatDetails.city">{{ candidatDetails.city }}, {{ candidatDetails.country }}</p>
+                        <p class="info-value" v-else> - </p>
                     </div>
                 </div>
             </div>
@@ -122,8 +128,7 @@
                     développement.</p>
                 <div class="pt-2 ">
                     <div class="d-flex justify-content-start align-items_center">
-                        <span class="badge bg-secondary">Effectué le </span>
-                        <span class="badge bg-secondary">Effectué le </span>
+                        <span class="badge bg-secondary" v-for="skill in candidatDetails.skills" :key="skill">{{ skill}} </span>
 
                     </div>
                 </div>
@@ -157,18 +162,18 @@
                     </div>
                     <!-- Table content  -->
                     <div class="d-flex justify-content-between align-items-center py-2 border-bottom"
-                        v-for="entreprise in 4" :key="entreprise">
+                        v-for="candidature in candidatDetails.candidacies" :key="candidature.slug">
                         <div class="flex-name">
-                            <p class="body-title">Amar DIALLO</p>
+                            <p class="body-title">{{ candidature.recruiter }}</p>
                         </div>
                         <div class="flex-poste">
-                            <p class="body-title">Chef de projet IT</p>
+                            <p class="body-title">{{ candidature.offer}}</p>
                         </div>
                         <div class="flex-status text-center">
-                            <p class="body-title text-center">12 juin 2024</p>
+                            <p class="body-title text-center">{{ $formatDate(candidature.created_at)}}</p>
                         </div>
                         <div class="flex-status text-center">
-                            <p class="body-title text-success">Actif</p>
+                            <p class="body-title text-success" v-if="candidature.status === 'ACCEPTED'">Acceptée</p>
                         </div>
                     </div>
                 </div>
@@ -180,7 +185,17 @@
 <script setup>
 definePageMeta({
     layout: 'default',
-})
+});
+const { $formatDate } = useNuxtApp();
+const route = useRoute();
+const candidateStore = useCandidateStore();
+
+const loading = computed(() => candidateStore.getLoading);
+const candidatDetails = computed(() => candidateStore.getCandidateDeatils);
+
+onMounted(() => {
+    candidateStore.onFetchCandidatesDetails(route.params.slug);
+});
 </script>
 <style scoped>
 .entreprise {
