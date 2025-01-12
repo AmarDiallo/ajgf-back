@@ -136,7 +136,9 @@
                 </div>
             </div>
             <div class="card-body">
-                <button class="btn btn-primary" @click="blockOffer()">Désactiver cette offre</button>
+                <button v-if="offerDetail.status != 'BLOCKED'" class="btn btn-primary" @click="blockOffer()">Désactiver
+                    cette offre</button>
+                <p class="text-danger" v-if="offerDetail.status === 'BLOCKED'">l'offre a été bloquée</p>
             </div>
         </div>
 
@@ -151,24 +153,41 @@
                 </div>
             </div>
             <div class="card-body">
-                <p class="pt-2">Développeur fullstack avec plusieurs années d’expérience dans la
-                    conception et le développement
-                    d’applications web et mobiles, je maîtrise aussi bien le front-end que le back-end. Habitué à
-                    travailler avec des technologies modernes, je prends en charge l’intégralité des projets, de
-                    l’analyse des besoins à la mise en production. Passionné par les défis techniques, j’aime développer
-                    des solutions performantes, évolutives et user-friendly. Mon objectif est de créer des plateformes
-                    optimisées, sécurisées et centrées sur l’utilisateur, tout en respectant les bonnes pratiques de
-                    développement.
-                </p>
+                <div class="pt-2" v-html="offerDetail.summary"></div>
             </div>
         </div>
 
-        <!-- Modal de suppression  -->
-        <div class="modal fade" id="modalArticle" tabindex="-1" aria-labelledby="modalArticleLabel" aria-hidden="true">
-            <template v-if="offerDetail">
-                <ModalDelete :modalObject="modalObjects" @deleteObject="onBlockThisOffer" />
-            </template>
+        <!-- DETAIL DE L'OFFRE  -->
+        <div class="card card-page mt-3">
+            <div class="card-body">
+                <div>
+                    <p class="page-title">Missions principales </p>
+                </div>
+                <div class="pt-2" v-html="offerDetail.mission"></div>
+
+                <div class="mt-3">
+                    <p class="page-title">Compétences requises</p>
+                </div>
+                <div class="pt-2" v-html="offerDetail.skills"></div>
+
+                <div class="mt-3">
+                    <p class="page-title">Profil recherché</p>
+                </div>
+                <div class="pt-2" v-html="offerDetail.skills"></div>
+
+                <div class="mt-3">
+                    <p class="page-title">Avantages</p>
+                </div>
+                <div class="pt-2" v-html="offerDetail.avantage"></div>
+            </div>
         </div>
+
+    </div>
+    <!-- Modal de suppression  -->
+    <div class="modal fade" id="modalArticle" tabindex="-1" aria-labelledby="modalArticleLabel" aria-hidden="true">
+        <template v-if="offerDetail">
+            <ModalDelete :modalObject="modalObjects" @closeModal="onBlockThisOffer" />
+        </template>
     </div>
 </template>
 <script setup>
@@ -196,15 +215,14 @@ const blockOffer = async () => {
     modalObjects.value = {
         title: "Désactivation de l'offre",
         description: "Êtes vous sûr de vouloir désactiver l'offre d'emploi",
-        name: "test",
-    }
-    console.log(modalObjects.value);
-    myModal.value.show()
-    // await offerStore.onBlockOffer(offerDetail.value.slug);
+        name: offerDetail.value.title,
+        btn: "Oui, désactiver"
+    };
+    myModal.value.show();
 };
 
 const onBlockThisOffer = () => {
-    // offerStore.onBlockOffer(offerDetail.value.slug);
+    offerStore.onBlockOffer(offerDetail.value.slug);
     myModal.value.hide();
 };
 </script>

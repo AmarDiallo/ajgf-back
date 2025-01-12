@@ -112,7 +112,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <button class="btn btn-success-large">Valider mon compte</button>
+                <button class="btn btn-success-large">Valider le compte</button>
                 <button class="btn btn-pending-large mx-3">Suspendre le compte</button>
             </div>
         </div>

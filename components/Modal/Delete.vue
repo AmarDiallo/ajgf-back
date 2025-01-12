@@ -8,12 +8,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p class="modal-user-body">Vouloez vous retirer<span class="fw-700">test</span> ?
+                <p class="modal-user-body">{{ modalObject.description }} <span class="fw-700">{{ modalObject.name}}</span> ?
                 </p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" @click="emit('deleteObject')">Retirer</button>
+                <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" @click="emit('closeModal')">{{ modalObject.btn
+                    }}</button>
             </div>
         </div>
     </div>

@@ -56,6 +56,7 @@
                             <div class="flex-status text-center">
                                 <p class="body-title text-success" v-if="offer.status === 'ACTIVE'">Actif</p>
                                 <p class="body-title text-pending" v-if="offer.status === 'DRAFT'">Brouillon</p>
+                                <p class="body-title text-danger" v-if="offer.status === 'BLOCKED'">Bloquée</p>
                             </div>
                             <div class="flex-date text-center">
                                 <p class="body-title text-center">{{ $formatDate(offer.created_at)}}</p>
@@ -110,12 +111,15 @@ onMounted(async () => {
     width: 20%;
 }
 .flex-entreprise {
-    width: 20%;
+    width: 15%;
 }
-.flex-role, .flex-date, .flex-candidature {
+.flex-role, .flex-candidature {
     width: 10%;
 }
-.flex-status, .flex-action {
+.flex-status, .flex-date  {
+    width: 15%;
+}
+.flex-action {
     width: 5%;
 }
 </style>

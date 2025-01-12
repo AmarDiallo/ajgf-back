@@ -64,6 +64,22 @@ export const useCandidateStore = defineStore("candidate", {
             }
         },
 
+        async onFetchCandidacies() {
+            try {
+                this.loading = true;
+                const { $api } = useNuxtApp();
+                let response = await $api.get("/api/candidates/candidacies/admin-candidacies");
+                if (response.status === 200) {
+                    this.loading = false;
+                    this.candidatures = response.data;
+                    console.log(response.data)
+                }
+            } catch (error: any) {
+                this.loading = false;
+                this.getError(error);
+            }
+        },
+
         async onSubmitCandidacies(formData: any) {
             try {
                 this.loadCandidacies = true;
