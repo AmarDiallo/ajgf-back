@@ -12,7 +12,7 @@
                 </p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-secondary" @click="emit('closeModal')">{{ modalObject.btn
                     }}</button>
             </div>
@@ -22,8 +22,6 @@
 <script setup>
 const props = defineProps(['modalObject']);
 const emit = defineEmits(['closeModal']);
-
-console.log(props.modalObject);
 </script>
 <style scoped>
 .modal-content {

@@ -138,7 +138,8 @@
             <div class="card-body">
                 <button v-if="offerDetail.status != 'BLOCKED'" class="btn btn-primary" @click="blockOffer()">Désactiver
                     cette offre</button>
-                <p class="text-danger" v-if="offerDetail.status === 'BLOCKED'">l'offre a été bloquée</p>
+                <button v-if="offerDetail.status === 'BLOCKED'" class="btn btn-secondary" @click="blockOffer()">Activer
+                    cette offre</button>
             </div>
         </div>
 

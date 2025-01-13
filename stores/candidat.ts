@@ -66,11 +66,12 @@ export const useCandidateStore = defineStore("candidate", {
             }
         },
 
+        // SECTION DES CANDIDATURES 
         async onFetchCandidacies() {
             try {
                 this.loading = true;
                 const { $api } = useNuxtApp();
-                let response = await $api.get("/api/candidates/candidacies/admin-candidacies");
+                let response = await $api.get("/api/candidates/candidacies/admin-list/");
                 if (response.status === 200) {
                     this.loading = false;
                     this.candidatures = response.data;
@@ -83,16 +84,33 @@ export const useCandidateStore = defineStore("candidate", {
             }
         },
 
-        async onSubmitCandidacies(formData: any) {
+        async onFetchDetailCandidacies(slug: string) {
             try {
-                this.loadCandidacies = true;
+                this.loading = true;
+                const { $api } = useNuxtApp();
+                let response = await $api.get("/api/candidates/candidacies/" + slug + '/admin-details/');
+                if (response.status === 200) {
+                    this.loading = false;
+                    this.candidature = response.data;
+                    console.log(response.data)
+                }
+            } catch (error: any) {
+                this.loading = false;
+                const { $error } = useNuxtApp();
+                $error(error);
+            }
+        },
+
+        async onCancelCandidacies(slug: string, formData: any) {
+            try {
+                this.loading = true;
                 const { $api, $swal } = useNuxtApp();
-                let response = await $api.post("/api/candidates/candidacies/", formData);
-                if (response.status === 201) {
-                    this.loadCandidacies = false;
+                let response = await $api.post("/api/candidates/candidacies/" + slug + "/cancel-candidacy", formData);
+                if (response.status === 200) {
+                    this.loading = false;
                     console.log(response.data)
                     $swal.fire({
-                        text: "Félicitations, votre candidature a été enregistrée avec succès",
+                        text: "Félicitations, la candidature a été annulée avec succès",
                         icon: "success",
                     });
                 }

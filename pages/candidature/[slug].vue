@@ -1,5 +1,10 @@
 <template>
-    <div>
+    <div v-if="loading" class="text-center loading-recruiter">
+        <div class="spinner-border spinner-border-recruiter" role="status">
+            <span class="visually-hidden">Chargement des candidatures en cours...</span>
+        </div>
+    </div>
+    <div v-if="candidature && !loading">
         <h5 class="page-title mb-3">Détails candidature</h5>
         <div class="row" style="margin-top: 16px;">
             <div class="col-md-4 col-lg-4">
@@ -9,7 +14,7 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Date de candidature</p>
-                        <p class="info-value">12 juin 2024</p>
+                        <p class="info-value">{{ $formatDate(candidature.created_at) }}</p>
                     </div>
                 </div>
             </div>
@@ -20,7 +25,9 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Statut</p>
-                        <p class="info-value text-pending">En attente</p>
+                        <p class="info-value text-pending" v-if="candidature.status === 'PENDING'">En attente</p>
+                        <p class="info-value text-success" v-if="candidature.status === 'ACCEPTED'">Acceptée</p>
+                        <p class="info-value text-danger" v-if="candidature.status === 'REJECTED'">Rejetée</p>
                     </div>
                 </div>
             </div>
@@ -35,7 +42,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <button class="btn btn-primary">Annuler la candidature</button>
+                <button class="btn btn-primary" @click="cancelCandidature()">Annuler la candidature</button>
             </div>
         </div>
 
@@ -48,16 +55,17 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body" v-if="candidature.candidate">
                 <div class="row" style="margin-top: 16px;">
                     <div class="col-md-4 col-lg-4">
                         <div class="info-card">
                             <div class="info-icon">
-                                <img src="/imgs/offre/orange.jpeg" alt="">
+                                <IconsUser class="text-white" />
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Prénom et Nom</p>
-                                <p class="info-value">Amar Diallo</p>
+                                <p class="info-value">{{ candidature.candidate.last_name }} {{
+                                    candidature.candidate.first_name }}</p>
                             </div>
                         </div>
                     </div>
@@ -68,7 +76,7 @@
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Poste actuel ou récent</p>
-                                <p class="info-value">Graphiste Designer</p>
+                                <p class="info-value">{{ candidature.candidate.actual_position }}</p>
                             </div>
                         </div>
                     </div>
@@ -79,7 +87,8 @@
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Adresse</p>
-                                <p class="info-value">Conakry</p>
+                                <p class="info-value">{{ candidature.candidate.city }}, {{ candidature.candidate.country
+                                    }}</p>
                             </div>
                         </div>
                     </div>
@@ -91,7 +100,7 @@
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Situation actuelle</p>
-                                <p class="info-value">En poste</p>
+                                <p class="info-value">{{ candidature.candidate.situation }}</p>
                             </div>
                         </div>
                     </div>
@@ -102,7 +111,7 @@
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Niveau d'études</p>
-                                <p class="info-value">Bac + 5</p>
+                                <p class="info-value">{{ candidature.candidate.degree }}</p>
                             </div>
                         </div>
                     </div>
@@ -113,7 +122,7 @@
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Année d'expérience</p>
-                                <p class="info-value">3 à 5 ans</p>
+                                <p class="info-value">{{ candidature.candidate.experience }}</p>
                             </div>
                         </div>
                     </div>
@@ -124,7 +133,7 @@
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Type de contrat recherché</p>
-                                <p class="info-value">CDI</p>
+                                <p class="info-value">{{ candidature.candidate.contract_type[0] }}</p>
                             </div>
                         </div>
                     </div>
@@ -135,7 +144,7 @@
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Disponibilité</p>
-                                <p class="info-value">À convenir</p>
+                                <p class="info-value">{{ candidature.candidate.availability }}</p>
                             </div>
                         </div>
                     </div>
@@ -146,7 +155,10 @@
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Type de contrat</p>
-                                <p class="info-value">CDI, CDD</p>
+                                <p class="info-value">
+                                    <span class="me-1" v-for="contrat in candidature.candidate.contract_type"
+                                        :key="contrat">{{ contrat }},</span>
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -171,16 +183,17 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body" v-if="candidature.offer">
                 <div class="row" style="margin-top: 16px;">
-                    <div class="col-md-4 col-lg-4">
+                    <div class="col-md-4 col-lg-4" v-if="candidature.offer.recruiter">
                         <div class="info-card">
-                            <div class="info-icon">
-                                <img src="/imgs/offre/orange.jpeg" alt="">
+                            <div class="info-icon logo">
+                                <img :src="candidature.offer.recruiter.logo" :alt="candidature.offer.recruiter.name"
+                                    class="logo-img">
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Entreprise</p>
-                                <p class="info-value">Orange Guinée</p>
+                                <p class="info-value">{{ candidature.offer.recruiter.name }}</p>
                             </div>
                         </div>
                     </div>
@@ -191,7 +204,7 @@
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Poste</p>
-                                <p class="info-value">Graphiste Designer</p>
+                                <p class="info-value">{{ candidature.offer.title }}</p>
                             </div>
                         </div>
                     </div>
@@ -202,7 +215,7 @@
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Type de contrat</p>
-                                <p class="info-value">CDI</p>
+                                <p class="info-value">{{ candidature.offer.contract_type }}</p>
                             </div>
                         </div>
                     </div>
@@ -225,7 +238,7 @@
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Expérience</p>
-                                <p class="info-value">3 à 5</p>
+                                <p class="info-value">{{ candidature.offer.experience }}</p>
                             </div>
                         </div>
                     </div>
@@ -236,7 +249,7 @@
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Niveau d'études</p>
-                                <p class="info-value">Bac + 5</p>
+                                <p class="info-value">{{ candidature.offer.degree }}</p>
                             </div>
                         </div>
                     </div>
@@ -258,7 +271,9 @@
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Date de publication</p>
-                                <p class="info-value">1 juin 2024</p>
+                                <p class="info-value">
+                                    {{ $formatDate(candidature.offer.published_at) }}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -269,7 +284,7 @@
                             </div>
                             <div class="info-content">
                                 <p class="info-text">Date d'expiration</p>
-                                <p class="info-value">20 juin 2024</p>
+                                <p class="info-value">{{ $formatDate(candidature.offer.limit_date) }}</p>
                             </div>
                         </div>
                     </div>
@@ -287,22 +302,52 @@
                 </div>
             </div>
             <div class="card-body">
-                <p class="pt-2">Développeur fullstack avec plusieurs années d’expérience dans la
-                    conception et le développement
-                    d’applications web et mobiles, je maîtrise aussi bien le front-end que le back-end. Habitué à
-                    travailler avec des technologies modernes, je prends en charge l’intégralité des projets, de
-                    l’analyse des besoins à la mise en production. Passionné par les défis techniques, j’aime développer
-                    des solutions performantes, évolutives et user-friendly. Mon objectif est de créer des plateformes
-                    optimisées, sécurisées et centrées sur l’utilisateur, tout en respectant les bonnes pratiques de
-                    développement.</p>
+                <div class="pt-2" v-html="candidature.message"></div>
             </div>
         </div>
+    </div>
+    <!-- Modal de suppression  -->
+    <div class="modal fade" id="modalCandidature" tabindex="-1" aria-labelledby="modalCandidatureLabel"
+        aria-hidden="true">
+        <ModalDelete :modalObject="modalObjects" @closeModal="onConfirmCancel" />
     </div>
 </template>
 <script setup>
 definePageMeta({
     layout: 'default',
-})
+});
+const route = useRoute();
+const candidatStore = useCandidateStore();
+const candidature = computed(() => candidatStore.getCandidature);
+const loading = computed(() => candidatStore.getLoading);
+
+const { $formatDate } = useNuxtApp();
+
+const myModal = ref(null);
+const modalObjects = ref({});
+
+onMounted(async () => {
+    candidatStore.onFetchDetailCandidacies(route.params.slug);
+
+    myModal.value = new bootstrap.Modal(document.getElementById('modalCandidature'));
+});
+
+const cancelCandidature = async () => {
+    if (candidature.value.offer) {
+        modalObjects.value = {
+            title: "Annulation de la candidature",
+            description: "Êtes vous sûr de vouloir annuler cette candidature",
+            name: candidature.value.offer.title,
+            btn: "Oui, annuler"
+        };
+        myModal.value.show();
+    }
+};
+
+const onConfirmCancel = async () => {
+    await candidatStore.onCancelCandidacies(route.params.slug, candidature.value);
+    myModal.value.hide();
+}
 </script>
 <style scoped>
 .entreprise {
@@ -387,5 +432,15 @@ definePageMeta({
 .btn-pending-large {
     background-color: #DCAC05 !important;
     border: 1px solid #DCAC05 !important;
+}
+
+.logo {
+    background-color: #fff !important;
+}
+
+.logo-img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
 }
 </style>
