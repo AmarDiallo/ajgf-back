@@ -38,7 +38,8 @@ export const useOfferStore = defineStore("offer", {
                 }
             } catch (error: any) {
                 this.loading = false;
-                this.getError(error);
+                const { $error } = useNuxtApp();
+                $error(error);
             }
         },
 
@@ -54,7 +55,8 @@ export const useOfferStore = defineStore("offer", {
                 }
             } catch (error: any) {
                 this.loading = false;
-                this.getError(error);
+                const { $error } = useNuxtApp();
+                $error(error);
             }
         },
 
@@ -70,7 +72,8 @@ export const useOfferStore = defineStore("offer", {
                 }
             } catch (error: any) {
                 this.loading = false;
-                this.getError(error);
+                const { $error } = useNuxtApp();
+                $error(error);
             }
         },
 
@@ -86,7 +89,8 @@ export const useOfferStore = defineStore("offer", {
                 }
             } catch (error: any) {
                 this.loading = false;
-                this.getError(error);
+                const { $error } = useNuxtApp();
+                $error(error);
             }
         },
 
@@ -102,7 +106,8 @@ export const useOfferStore = defineStore("offer", {
                 }
             } catch (error: any) {
                 this.loading = false;
-                this.getError(error);
+                const { $error } = useNuxtApp();
+                $error(error);
             }
         },
 
@@ -118,7 +123,8 @@ export const useOfferStore = defineStore("offer", {
                 }
             } catch (error: any) {
                 this.loading = false;
-                this.getError(error);
+                const { $error } = useNuxtApp();
+                $error(error);
             }
         },
 
@@ -135,7 +141,8 @@ export const useOfferStore = defineStore("offer", {
                 }
             } catch (error: any) {
                 this.loading = false;
-                this.getError(error);
+                const { $error } = useNuxtApp();
+                $error(error);
             }
         },
 
@@ -151,7 +158,8 @@ export const useOfferStore = defineStore("offer", {
                 }
             } catch (error: any) {
                 this.loading = false;
-                this.getError(error);
+                const { $error } = useNuxtApp();
+                $error(error);
             }
         },
 
@@ -172,35 +180,9 @@ export const useOfferStore = defineStore("offer", {
                 }
             } catch (error: any) {
                 this.loading = false;
-                this.getError(error);
+                const { $error } = useNuxtApp();
+                $error(error);
             }
-        },
-
-        getError(error: any) {
-            if (error.response.status == 401) {
-                // localStorage.clear()
-                // location.assign('/auth/login')
-            }
-            if (
-                error.response.status == 401 ||
-                error.response.status == 403 ||
-                error.response.status === 422
-            ) {
-                this.errorMessage = error.response.data.message;
-                if (error.response.data.errors) {
-                    this.errors = error.response.data.errors;
-                }
-            } else if (error.response.status == 500) {
-                this.errorMessage =
-                    "Erreur de traitement, vueillez réessayer plus tard.";
-            }
-
-            const { $swal } = useNuxtApp();
-            $swal.fire({
-                title: "Erreur !",
-                text: this.errorMessage,
-                icon: "error",
-            });
-        },
+        }
     }
 });

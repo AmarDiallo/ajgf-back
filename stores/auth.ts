@@ -9,6 +9,7 @@ export const useAuthStore = defineStore('auth', {
         showConfirmCode: false,
         login_token: "",
         errorMessage: "",
+        user: null,
         showError: false,
         showSuccess: false,
         showMessageSuccessPassword: false,
@@ -26,7 +27,8 @@ export const useAuthStore = defineStore('auth', {
         getPasswordMsgConfirmation(state) { return state.showMessageSuccessPassword; },
         getShowSuccess(state) { return state.showSuccess; },
         getShowError(state) { return state.showError; },
-        getErrorMessage(state) { return state.errorMessage; }
+        getErrorMessage(state) { return state.errorMessage; },
+        getUser: (state) => state.user
     },
     actions: {
         async onLogin(formData: any) {
@@ -43,47 +45,25 @@ export const useAuthStore = defineStore('auth', {
                 }
             } catch (error: any) {
                 this.loading = false;
-                this.getError(error)
+                const { $error } = useNuxtApp();
+                $error(error);
             }
         },
 
-
-        async onUpdateRecruiter(data: any) {
-            try {
-                this.loadInfo = true;
-                const { $api, $swal, $crypto, $locally } = useNuxtApp();
-                let response = await $api.patch('/api/users/me/', data);
-                if (response.status === 200) {
-                    this.loadInfo = false;
-                    $locally.setItem('user', $crypto(response.data));
-                    $swal.fire({
-                        text: "Félliciations, vos informations ont été modifiées avec succès.",
-                        icon: "success",
-                    });
-                }
-            } catch (error: any) {
-                this.loadInfo = false;
-                this.getError(error)
-            }
-        },
-
-        async onResetEmail(data: any) {
+        async onFetchAuthUser() {
             try {
                 this.loading = true;
-                const { $api, $swal } = useNuxtApp();
-                let response = await $api.post('/api/users/set_email/', data);
-                console.log(response)
-                if (response.status === 204) {
+                const { $api, $crypto, $locally } = useNuxtApp();
+                let response = await $api.get('/api/users/me/');
+                if (response.status === 200) {
                     this.loading = false;
-                    this.showMsgEmail = true;
-                    $swal.fire({
-                        text: "Félliciations, vote email a été modifié avec succès.",
-                        icon: "success",
-                    });
+                    this.user = response.data;
+                    $locally.setItem('user', $crypto(response.data));
                 }
             } catch (error: any) {
                 this.loading = false;
-                this.getError(error)
+                const { $error } = useNuxtApp();
+                $error(error);
             }
         },
 
@@ -102,38 +82,9 @@ export const useAuthStore = defineStore('auth', {
                 }
             } catch (error: any) {
                 this.loadPassword = false;
-                this.getError(error)
+                const { $error } = useNuxtApp();
+                $error(error);
             }
-        },
-
-        getError(error: any) {
-            this.loading = false;
-            this.errorMessage = error.response.data.error
-            if (error.response.status == 401) {
-                this.errorMessage = error.response.data.detail;
-                // localStorage.clear()
-                // location.assign('/auth/login')
-            }
-            if (
-                error.response.status == 401 ||
-                error.response.status == 403 ||
-                error.response.status === 422
-            ) {
-                this.errorMessage = error.response.data.message;
-                if (error.response.data.errors) {
-                    this.errors = error.response.data.errors;
-                }
-            } else if (error.response.status == 500) {
-                this.errorMessage =
-                    "Erreur de traitement, vueillez réessayer plus tard.";
-            }
-
-            const { $swal } = useNuxtApp();
-            $swal.fire({
-                title: "Erreur !",
-                text: this.errorMessage,
-                icon: "error",
-            });
         },
     }
 })
