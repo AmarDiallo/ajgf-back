@@ -105,8 +105,8 @@ export const useCandidateStore = defineStore("candidate", {
             try {
                 this.loading = true;
                 const { $api, $swal } = useNuxtApp();
-                let response = await $api.post("/api/candidates/candidacies/" + slug + "/cancel-candidacy", formData);
-                if (response.status === 200) {
+                let response = await $api.put("/api/candidates/candidacies/" + slug + "/cancel-candidacy/", formData);
+                if (response.status === 201) {
                     this.loading = false;
                     console.log(response.data)
                     $swal.fire({

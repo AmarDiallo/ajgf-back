@@ -27,13 +27,13 @@
                         <p class="info-text">Statut</p>
                         <p class="info-value text-pending" v-if="candidature.status === 'PENDING'">En attente</p>
                         <p class="info-value text-success" v-if="candidature.status === 'ACCEPTED'">Acceptée</p>
-                        <p class="info-value text-danger" v-if="candidature.status === 'REJECTED'">Rejetée</p>
+                        <p class="info-value text-danger" v-if="candidature.status === 'CANCELED'">Annulée</p>
                     </div>
                 </div>
             </div>
         </div>
         <!-- ACTIONS  -->
-        <div class="card card-page mb-3">
+        <div class="card card-page mb-3" v-if="candidature.status != 'CANCELED'">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>

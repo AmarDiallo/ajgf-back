@@ -15,7 +15,7 @@
                     <input type="text" class="form-control" placeholder="Recherche" />
                 </div>
 
-                <div class="zone-table">
+                <div class="zone-table" v-if="articles.count > 0 && !loading">
                     <!-- Table header  -->
                     <div class="d-flex justify-content-between align-items-center my-2 border-bottom">
                         <div class="flex-title">
@@ -36,25 +36,27 @@
                     </div>
                     <!-- Table content  -->
                     <div class="d-flex justify-content-between align-items-center py-2 border-bottom"
-                        v-for="entreprise in 3" :key="entreprise">
+                        v-for="article in articles.results" :key="article.slug">
                         <div class="flex-title">
                             <div class="d-flex align-items-center justify-content-start">
                                 <div>
                                     <img src="/imgs/article.jpeg" alt="" class="img-article">
                                 </div>
                                 <div class="mx-3">
-                                    <p class="body-title">Mon article tout le monde</p>
+                                    <p class="body-title">{{ article.title }}</p>
                                 </div>
                             </div>
                         </div>
                         <div class="flex-autor">
-                            <p class="body-title text-center">Orange Guinée</p>
+                            <p class="body-title text-center">{{ article.recruiter }}</p>
                         </div>
                         <div class="flex-status text-center">
-                            <p class="body-title text-success">Actif</p>
+                            <p class="body-title text-pending" v-if="article.status === 'NEW'">Nouveau</p>
+                            <!-- <p class="body-title text-success" v-if="article.status === 'NEW'">En ligne</p>
+                            <p class="body-title text-primary" v-if="article.status === 'NEW'">Refusé</p> -->
                         </div>
                         <div class="flex-date text-center">
-                            <p class="body-title text-center">12 juin 2024</p>
+                            <p class="body-title text-center">{{ $formatDate(article.created_at)}}</p>
                         </div>
                         <div class="flex-action">
                             <p class="text-end">
@@ -63,6 +65,16 @@
                                 </button>
                             </p>
                         </div>
+                    </div>
+                </div>
+
+                <div v-if="articles.count === 0 && !loading" class="text-center my-4">
+                    <p>Il n'y a pas d'articles enregistrés</p>
+
+                </div>
+                <div v-if="loading" class="text-center loading-recruiter">
+                    <div class="spinner-border spinner-border-recruiter" role="status">
+                        <span class="visually-hidden">Chargement des articles...</span>
                     </div>
                 </div>
             </div>
@@ -77,6 +89,8 @@ definePageMeta({
 const articleStore = useArticleStore();
 const loading = computed(() => articleStore.loading);
 const articles = computed(() => articleStore.getArticles);
+
+const { $formatDate } = useNuxtApp();
 
 onMounted(() => {
     articleStore.onFetchArticles();

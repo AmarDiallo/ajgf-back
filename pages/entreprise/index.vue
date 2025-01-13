@@ -14,8 +14,7 @@
                 <div class="zone-search">
                     <input type="text" class="form-control" placeholder="Recherche" />
                 </div>
-
-                <div class="zone-table">
+                <div class="zone-table" v-if="recruiters.count > 0 && !loading">
                     <!-- Table header  -->
                     <div class="d-flex justify-content-between align-items-center my-2 border-bottom">
                         <div class="flex-name">
@@ -24,13 +23,13 @@
                         <div class="flex-email">
                             <p class="table-title">Email</p>
                         </div>
-                        <div class="flex-phone">
+                        <div class="flex-offer">
                             <p class="table-title text-center">Offre d'emploi</p>
                         </div>
                         <div class="flex-status">
                             <p class="table-title text-center">Statut</p>
                         </div>
-                         <div class="flex-date">
+                        <div class="flex-date">
                             <p class="table-title text-center">Inscription</p>
                         </div>
                         <div class="flex-action">
@@ -39,56 +38,84 @@
                     </div>
                     <!-- Table content  -->
                     <div class="d-flex justify-content-between align-items-center py-2 border-bottom"
-                        v-for="entreprise in 12" :key="entreprise">
+                        v-for="recruiter in recruiters.results" :key="recruiter.slug">
                         <div class="flex-name">
-                            <p class="body-title">Amar DIALLO</p>
+                            <p class="body-title">{{ recruiter.name }}</p>
                         </div>
                         <div class="flex-email">
-                            <p class="body-title">amardiallo94@gmail.com</p>
+                            <p class="body-title">{{ recruiter.email }}</p>
                         </div>
-                        <div class="flex-phone text-center">
+                        <div class="flex-offer text-center">
                             <p class="body-title">3</p>
                         </div>
                         <div class="flex-status text-center">
-                            <p class="body-title text-success">Actif</p>
+                            <p class="body-title text-success" v-if="recruiter.status === 'ACTIVE'">Active</p>
+                            <p class="body-title text-success" v-if="recruiter.status === 'BLOCKED'">Bloquée</p>
                         </div>
                         <div class="flex-date text-center">
-                            <p class="body-title text-center">12 juin 2024</p>
+                            <p class="body-title text-center">{{ $formatDate(recruiter.created_at) }}</p>
                         </div>
                         <div class="flex-action">
                             <p class="text-end">
-                                <NuxtLink to="/entreprise/slug" class="btn btn-success">
+                                <NuxtLink :to="'/entreprise/' + recruiter.slug" class="btn btn-success">
                                     <IconsEye />
                                 </NuxtLink>
                             </p>
                         </div>
                     </div>
                 </div>
+
+                <div v-if="recruiters.count === 0 && !loading" class="text-center my-4">
+                    <p>Il n'y a pas d'entreprises enregistrées</p>
+
+                </div>
+                <div v-if="loading" class="text-center loading-recruiter">
+                    <div class="spinner-border spinner-border-recruiter" role="status">
+                        <span class="visually-hidden">Chargement des offres...</span>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 </template>
 <script setup>
+const recruiterStore = useRecruiterStore();
 
+const loading = computed(() => recruiterStore.getLoading);
+const recruiters = computed(() => recruiterStore.getRecruiters);
+
+const { $formatDate } = useNuxtApp();
+
+onMounted(async () => {
+    await recruiterStore.onFetchRecuiters();
+});
 </script>
 <style scoped>
 .zone-search {
     padding: 10px 20px 16px 20px;
     border-bottom: 1px solid #E5EDEF;
 }
+
 .zone-table {
     padding: 0 20px;
 }
+
 .flex-name {
     width: 25%;
 }
-.flex-email, .flex-role {
+
+.flex-email {
     width: 20%;
 }
-.flex-phone {
-    width: 20%;
+
+.flex-status,
+.flex-offer,
+.flex-date {
+    width: 15%;
 }
-.flex-status, .flex-role, .flex-action, .flex-date {
-    width: 10%;
+
+.flex-action {
+    width: 5%;
 }
 </style>

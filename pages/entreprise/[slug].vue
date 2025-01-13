@@ -1,15 +1,20 @@
 <template>
-    <div>
+    <div v-if="loading" class="text-center loading-recruiter">
+        <div class="spinner-border spinner-border-recruiter" role="status">
+            <span class="visually-hidden">Chargement d'entreprise en cours...</span>
+        </div>
+    </div>
+    <div v-if="recruiterDetail && !loading">
         <h5 class="page-title mb-3">Profil entreprise</h5>
         <div class="row" style="margin-top: 16px;">
             <div class="col-md-4 col-lg-4">
                 <div class="info-card">
-                    <div class="info-icon">
-                        <img src="/imgs/offre/orange.jpeg" alt="">
+                    <div class="info-icon logo">
+                        <img :src="recruiterDetail.logo" :alt="recruiterDetail.name" class="logo-img">
                     </div>
                     <div class="info-content">
                         <p class="info-text">Nom de l'entreprise</p>
-                        <p class="info-value">Orange Guinée</p>
+                        <p class="info-value">{{ recruiterDetail.name }}</p>
                     </div>
                 </div>
             </div>
@@ -20,7 +25,10 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Statut</p>
-                        <p class="info-value text-pending">En attente de validation</p>
+                        <p class="info-value text-pending" v-if="recruiterDetail.status === 'PENDING'">En attente de
+                            validation</p>
+                        <p class="info-value text-success" v-if="recruiterDetail.status === 'ACTIVE'">Validée</p>
+                        <p class="info-value text-primary" v-if="recruiterDetail.status === 'BLOCKED'">Suspendu</p>
                     </div>
                 </div>
             </div>
@@ -31,7 +39,8 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Secteur d'activité</p>
-                        <p class="info-value">Développeur full-stack</p>
+                        <p class="info-value" v-if="recruiterDetail.activity_sector">{{
+                            recruiterDetail.activity_sector.name }}</p>
                     </div>
                 </div>
             </div>
@@ -42,7 +51,7 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Adresse</p>
-                        <p class="info-value">Conakry, Guinée</p>
+                        <p class="info-value">{{ recruiterDetail.address }}</p>
                     </div>
                 </div>
             </div>
@@ -53,7 +62,7 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Téléphone</p>
-                        <p class="info-value">+224 623 41 91 47</p>
+                        <p class="info-value">{{ recruiterDetail.phone }}</p>
                     </div>
                 </div>
             </div>
@@ -64,7 +73,7 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Email</p>
-                        <p class="info-value">orange.guinee@gmail.com</p>
+                        <p class="info-value">{{ recruiterDetail.email }}</p>
                     </div>
                 </div>
             </div>
@@ -75,7 +84,7 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Date de création</p>
-                        <p class="info-value">2027</p>
+                        <p class="info-value">{{ new Date(recruiterDetail.creation_date).getFullYear() }}</p>
                     </div>
                 </div>
             </div>
@@ -86,7 +95,7 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Nombre d'employées</p>
-                        <p class="info-value">+ 500</p>
+                        <p class="info-value">{{ recruiterDetail.nb_employees }}</p>
                     </div>
                 </div>
             </div>
@@ -97,7 +106,7 @@
                     </div>
                     <div class="info-content">
                         <p class="info-text">Site web</p>
-                        <p class="info-value">www.orange.guinee.com</p>
+                        <p class="info-value">-</p>
                     </div>
                 </div>
             </div>
@@ -112,8 +121,9 @@
                 </div>
             </div>
             <div class="card-body">
-                <button class="btn btn-success-large">Valider le compte</button>
-                <button class="btn btn-pending-large mx-3">Suspendre le compte</button>
+                <button class="btn btn-success-large me-3" v-if="recruiterDetail.status != 'ACTIVE'"
+                    @click="onValidRecruiter()">Valider le compte</button>
+                <button class="btn btn-pending-large" @click="blockedRecruiter()" v-if="recruiterDetail.status != 'BLOCKED'" >Suspendre le compte</button>
             </div>
         </div>
 
@@ -127,14 +137,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <p class="pt-2">Développeur fullstack avec plusieurs années d’expérience dans la
-                    conception et le développement
-                    d’applications web et mobiles, je maîtrise aussi bien le front-end que le back-end. Habitué à
-                    travailler avec des technologies modernes, je prends en charge l’intégralité des projets, de
-                    l’analyse des besoins à la mise en production. Passionné par les défis techniques, j’aime développer
-                    des solutions performantes, évolutives et user-friendly. Mon objectif est de créer des plateformes
-                    optimisées, sécurisées et centrées sur l’utilisateur, tout en respectant les bonnes pratiques de
-                    développement.</p>
+                <div class="pt-2">{{ recruiterDetail.description }}</div>
             </div>
         </div>
 
@@ -148,14 +151,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <p class="pt-2">Développeur fullstack avec plusieurs années d’expérience dans la
-                    conception et le développement
-                    d’applications web et mobiles, je maîtrise aussi bien le front-end que le back-end. Habitué à
-                    travailler avec des technologies modernes, je prends en charge l’intégralité des projets, de
-                    l’analyse des besoins à la mise en production. Passionné par les défis techniques, j’aime développer
-                    des solutions performantes, évolutives et user-friendly. Mon objectif est de créer des plateformes
-                    optimisées, sécurisées et centrées sur l’utilisateur, tout en respectant les bonnes pratiques de
-                    développement.</p>
+                <div class="pt-2">{{ recruiterDetail.mission }}</div>
             </div>
         </div>
 
@@ -169,14 +165,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <p class="pt-2">Développeur fullstack avec plusieurs années d’expérience dans la
-                    conception et le développement
-                    d’applications web et mobiles, je maîtrise aussi bien le front-end que le back-end. Habitué à
-                    travailler avec des technologies modernes, je prends en charge l’intégralité des projets, de
-                    l’analyse des besoins à la mise en production. Passionné par les défis techniques, j’aime développer
-                    des solutions performantes, évolutives et user-friendly. Mon objectif est de créer des plateformes
-                    optimisées, sécurisées et centrées sur l’utilisateur, tout en respectant les bonnes pratiques de
-                    développement.</p>
+                <div class="pt-2">{{ recruiterDetail.opportunities }}</div>
             </div>
         </div>
 
@@ -221,7 +210,7 @@
                     </div>
                     <!-- Table content  -->
                     <div class="d-flex justify-content-between align-items-center py-2 border-bottom"
-                        v-for="entreprise in 4" :key="entreprise">
+                        v-for="entreprise in 1" :key="entreprise">
                         <div class="flex-name">
                             <p class="body-title">Amar DIALLO</p>
                         </div>
@@ -244,7 +233,34 @@
 <script setup>
 definePageMeta({
     layout: 'default',
-})
+});
+
+const route = useRoute();
+const recruiterStore = useRecruiterStore();
+const loading = computed(() => recruiterStore.getLoading);
+const recruiterDetail = computed(() => recruiterStore.getRecruiterDetail);
+
+onMounted(async () => {
+    await recruiterStore.onFetchDetailRecruiter(route.params.slug);
+});
+
+const onValidRecruiter = async () => {
+    const data = reactive({
+        status: 'ACTIVE',
+    });
+    await recruiterStore.onActiveRecruiter(route.params.slug, data);
+};
+
+const onDeactiveRecruiter = async () => {
+    console.log('Deactive recuiter');
+}
+
+const blockedRecruiter = async () => {
+    const data = reactive({
+        status: 'BLOCKED',
+    });
+    await recruiterStore.onActiveRecruiter(route.params.slug, data);
+}
 </script>
 <style scoped>
 .entreprise {
@@ -327,5 +343,14 @@ definePageMeta({
 .btn-pending-large {
     background-color: #DCAC05 !important;
     border: 1px solid #DCAC05 !important;
+}
+.logo {
+    background-color: #fff !important;
+}
+
+.logo-img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
 }
 </style>

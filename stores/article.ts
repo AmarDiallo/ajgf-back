@@ -22,11 +22,11 @@ export const useArticleStore = defineStore("article", {
             try {
                 this.loading = true;
                 const { $api } = useNuxtApp();
-                let response = await $api.get("/api/articles/");
+                let response = await $api.get("/api/articles/admin-list/");
                 if (response.status === 200) {
                     this.loading = false;
-                    console.log(response.data.results)
-                    this.articles = response.data.results;
+                    console.log(response.data)
+                    this.articles = response.data;
                 }
             } catch (error: any) {
                 this.loading = false;

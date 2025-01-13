@@ -53,6 +53,7 @@
                             <div class="flex-status text-center">
                                 <p class="body-title text-success" v-if="candidature.status === 'ACCEPTED'">Acceptée</p>
                                 <p class="body-title text-pending" v-if="candidature.status === 'PENDING'">En cours</p>
+                                <p class="body-title text-primary" v-if="candidature.status === 'CANCELED'">Annulée</p>
                             </div>
                             <div class="flex-date text-center">
                                 <p class="body-title text-center">{{ $formatDate(candidature.created_at)}}</p>
