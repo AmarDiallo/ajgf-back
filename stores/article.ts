@@ -3,11 +3,9 @@ import { defineStore } from "pinia";
 export const useArticleStore = defineStore("article", {
     state: () => ({
         loading: false,
-        showError: false,
-        showSuccess: false,
-        errorMessage: "",
         articleDetail: {},
-        errors: [],
+        currentPage: 1,
+        totalPage: 0,
         articles: [],
     }),
 
@@ -15,18 +13,22 @@ export const useArticleStore = defineStore("article", {
         getLoading: (state) => state.loading,
         getArticles: (state) => state.articles,
         getArticleDetail: (state) => state.articleDetail,
+        getCurrentPage: (state) => state.currentPage,
+        getTotalPage: (state) => state.totalPage,
     },
 
     actions: {
-        async onFetchArticles() {
+        async onFetchArticles(page: number = 1) {
             try {
                 this.loading = true;
                 const { $api } = useNuxtApp();
-                let response = await $api.get("/api/articles/admin-list/");
+                let response = await $api.get("/api/articles/admin-list/?page=" + page);
                 if (response.status === 200) {
                     this.loading = false;
                     console.log(response.data)
                     this.articles = response.data;
+                    this.currentPage = page;
+                    this.totalPage = Math.ceil(response.data.count / 3);
                 }
             } catch (error: any) {
                 this.loading = false;
@@ -39,7 +41,7 @@ export const useArticleStore = defineStore("article", {
             try {
                 this.loading = true;
                 const { $api } = useNuxtApp();
-                let response = await $api.get("/api/articles/" + slug + '/');
+                let response = await $api.get("/api/articles/" + slug + '/admin-detail/');
                 if (response.status === 200) {
                     this.loading = false;
                     console.log(response.data)
@@ -52,45 +54,19 @@ export const useArticleStore = defineStore("article", {
             }
         },
 
-        async onCreateArticle(formData: any) {
-            try {
-                this.loading = true;
-                const { $api } = useNuxtApp();
-                let response = await $api.post("/api/articles/", formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
-                if (response.status === 201) {
-                    this.loading = false;
-                    const router = useRouter();
-                    router.push('/recruiter/articles');
-                }
-            } catch (error: any) {
-                this.loading = false;
-                const { $error } = useNuxtApp();
-                $error(error);
-            }
-        },
-
-
-        async onUpdateArticle(formData: any, slug: string) {
+        async onAcceptArticle(slug: string) {
             try {
                 this.loading = true;
                 const { $api, $swal } = useNuxtApp();
-                let response = await $api.patch("/api/articles/" + slug + '/', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
+                let response = await $api.post("/api/articles/" + slug + '/validate_article/');
                 if (response.status === 200) {
                     this.loading = false;
-                    const router = useRouter();
+                    console.log(response.data)
                     $swal.fire({
-                        text: "Félliciations, votre article a été modifié avec succès.",
+                        text: "Félicitations, la candidature a été annulée avec succès",
                         icon: "success",
                     });
-                    router.push('/recruiter/articles');
+                    await this.onFetchArticleDetail(slug);
                 }
             } catch (error: any) {
                 this.loading = false;
@@ -99,26 +75,25 @@ export const useArticleStore = defineStore("article", {
             }
         },
 
-
-        async onDeleteArticle(slug: string) {
+        async onRejectArticle(slug: string) {
             try {
                 this.loading = true;
                 const { $api, $swal } = useNuxtApp();
-                let response = await $api.delete("/api/articles/" + slug + '/');
-                if (response.status === 204) {
+                let response = await $api.post("/api/articles/" + slug + '/reject_article/');
+                if (response.status === 200) {
                     this.loading = false;
+                    console.log(response.data)
                     $swal.fire({
-                        title: "Succès !",
-                        text: "Article supprimé avec succès.",
+                        text: "Félicitations, la candidature a été annulée avec succès",
                         icon: "success",
                     });
-                    await this.onFetchArticles();
+                    await this.onFetchArticleDetail(slug);
                 }
             } catch (error: any) {
                 this.loading = false;
                 const { $error } = useNuxtApp();
                 $error(error);
             }
-        }
+        },
     }
 });

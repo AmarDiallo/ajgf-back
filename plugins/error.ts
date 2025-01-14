@@ -21,8 +21,13 @@ export default defineNuxtPlugin(async () => {
                 if (error.response.status === 400) {
                     let customError = "";
                     console.log(error.response);
-                    for (let key in error.response.data) {
-                        customError = error.response.data[key][0];
+                    if(error.response.data.status) {
+                        customError = error.response.data.status;
+                    }
+                    else {
+                        for (let key in error.response.data) {
+                            customError = error.response.data[key][0];
+                        }
                     }
                     return Swal.fire({
                         title: "Erreur !",

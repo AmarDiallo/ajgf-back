@@ -35,7 +35,7 @@
                         </div>
                     </div>
                     <!-- Table content  -->
-                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom"
+                    <div class="d-flex justify-content-between align-items-center py-2"
                         v-for="article in articles.results" :key="article.slug">
                         <div class="flex-title">
                             <div class="d-flex align-items-center justify-content-start">
@@ -51,18 +51,19 @@
                             <p class="body-title text-center">{{ article.recruiter }}</p>
                         </div>
                         <div class="flex-status text-center">
-                            <p class="body-title text-pending" v-if="article.status === 'NEW'">Nouveau</p>
-                            <!-- <p class="body-title text-success" v-if="article.status === 'NEW'">En ligne</p>
-                            <p class="body-title text-primary" v-if="article.status === 'NEW'">Refusé</p> -->
+                            <p class="body-title text-secondary" v-if="article.status === 'NEW'">Nouveau</p>
+                            <p class="body-title text-pending" v-if="article.status === 'SUBMITTED'">En attente</p>
+                            <p class="body-title text-success" v-if="article.status === 'VALIDATED'">En ligne</p>
+                            <p class="body-title text-primary" v-if="article.status === 'REJECTED'">Refusé</p>
                         </div>
                         <div class="flex-date text-center">
                             <p class="body-title text-center">{{ $formatDate(article.created_at)}}</p>
                         </div>
                         <div class="flex-action">
                             <p class="text-end">
-                                <button class="btn btn-success">
+                                <NuxtLink :to="'/article/' + article.slug" class="btn btn-success">
                                     <IconsEye />
-                                </button>
+                                </NuxtLink>
                             </p>
                         </div>
                     </div>
@@ -78,6 +79,10 @@
                     </div>
                 </div>
             </div>
+            <div class="mt-3 mb-4">
+                <Pagination :totalPages="totalPage" :currentPage="currentPage" @pageChange="onPageChange" />
+
+            </div>
         </div>
     </div>
 </template>
@@ -89,12 +94,18 @@ definePageMeta({
 const articleStore = useArticleStore();
 const loading = computed(() => articleStore.loading);
 const articles = computed(() => articleStore.getArticles);
+const currentPage = computed(() => articleStore.getCurrentPage);
+const totalPage = computed(() => articleStore.getTotalPage);
 
 const { $formatDate } = useNuxtApp();
 
 onMounted(() => {
     articleStore.onFetchArticles();
 });
+
+const onPageChange = async (page) => {
+    await articleStore.onFetchArticles(page);
+};
 
 </script>
 <style scoped>
@@ -129,5 +140,8 @@ onMounted(() => {
     width: 125px;
     height: 80px;
     border-radius: 8px;
+}
+.card-footer {
+    border-top: none;
 }
 </style>
