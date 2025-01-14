@@ -82,6 +82,10 @@
     </div>
 </template>
 <script setup>
+definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+})
 const candidatStore = useCandidateStore();
 
 const candidatures = computed(() => candidatStore.getCandidatures);

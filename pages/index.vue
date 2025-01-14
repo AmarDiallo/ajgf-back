@@ -184,7 +184,7 @@
 <script setup>
 definePageMeta({
     layout: 'default',
-    // middleware: 'auth'
+    middleware: 'auth'
 })
 </script>
 <style scoped>

@@ -88,6 +88,11 @@
     </div>
 </template>
 <script setup>
+definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+})
+
 const offerStore = useOfferStore();
 
 const loading = computed(() => offerStore.getLoading);

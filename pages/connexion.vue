@@ -48,6 +48,7 @@
 <script setup>
 definePageMeta({
     layout: 'auth',
+    middleware: 'guest'
 });
 import useVuelidate from '@vuelidate/core'
 import { required, email, minLength, helpers } from '@vuelidate/validators'

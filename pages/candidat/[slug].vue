@@ -185,7 +185,8 @@
 <script setup>
 definePageMeta({
     layout: 'default',
-});
+    middleware: 'auth'
+})
 const { $formatDate } = useNuxtApp();
 const route = useRoute();
 const candidateStore = useCandidateStore();

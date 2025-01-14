@@ -89,6 +89,10 @@
     </div>
 </template>
 <script setup>
+definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+})
 const { $formatDate } = useNuxtApp();
 const candidatStore = useCandidateStore();
 

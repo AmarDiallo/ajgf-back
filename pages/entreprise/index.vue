@@ -80,6 +80,10 @@
     </div>
 </template>
 <script setup>
+definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+})
 const recruiterStore = useRecruiterStore();
 
 const loading = computed(() => recruiterStore.getLoading);

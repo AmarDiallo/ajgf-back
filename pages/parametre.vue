@@ -67,7 +67,10 @@
     </div>
 </template>
 <script setup>
-
+definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+})
 </script>
 <style scoped>
 .zone-search {

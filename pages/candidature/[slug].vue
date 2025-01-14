@@ -315,7 +315,8 @@
 <script setup>
 definePageMeta({
     layout: 'default',
-});
+    middleware: 'auth'
+})
 const route = useRoute();
 const candidatStore = useCandidateStore();
 const candidature = computed(() => candidatStore.getCandidature);

@@ -119,6 +119,10 @@
     </div>
 </template>
 <script setup>
+definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+})
 import useVuelidate from '@vuelidate/core'
 import { required, email, minLength, helpers, sameAs } from '@vuelidate/validators'
 

@@ -47,6 +47,11 @@
     </div>
 </template>
 <script setup>
+definePageMeta({
+    layout: 'default',
+    middleware: 'auth'
+});
+
 const route = useRoute();
 const articleStore = useArticleStore();
 

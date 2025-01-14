@@ -89,7 +89,8 @@
 <script setup>
 definePageMeta({
     layout: 'default',
-});
+    middleware: 'auth'
+})
 
 const articleStore = useArticleStore();
 const loading = computed(() => articleStore.loading);
